@@ -1,0 +1,221 @@
+﻿<UserControl x:Class="ChecksumCalculator.Views.CompareFilesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             Background="White">
+
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="MatchBrush"     Color="#E8F7EE"/>
+        <SolidColorBrush x:Key="MatchBorder"    Color="#5DBB8A"/>
+        <SolidColorBrush x:Key="MatchText"      Color="#27834F"/>
+        <SolidColorBrush x:Key="MismatchBrush"  Color="#FDE8E8"/>
+        <SolidColorBrush x:Key="MismatchBorder" Color="#E07070"/>
+        <SolidColorBrush x:Key="MismatchText"   Color="#B03030"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="30,24" MaxWidth="760">
+
+                <Border x:Name="DropFirst"
+                        Height="100"
+                        Background="White"
+                        BorderBrush="#CCCCCC"
+                        BorderThickness="1.5"
+                        CornerRadius="8"
+                        AllowDrop="True" Cursor="Hand"
+                        Drop="DropFirstFile_Drop"
+                        DragOver="DropFirstFile_DragOver"
+                        DragLeave="DropFirstFile_DragLeave"
+                        MouseLeftButtonDown="DropFirstFile_Click"
+                        MouseEnter="DropFirstFile_MouseEnter"
+                        MouseLeave="DropFirstFile_MouseLeave">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False">
+                        <TextBlock Text="File 1 — drop here or click to browse"
+                                   FontSize="13" 
+                                   Foreground="#555555" 
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding FirstFile.FileName}"
+                                   FontSize="13" 
+                                   FontWeight="SemiBold" 
+                                   Foreground="Black"
+                                   HorizontalAlignment="Center" 
+                                   Margin="0,4,0,0"/>
+                        <TextBlock Text="{Binding FirstFile.FileSize}"
+                                   FontSize="11" 
+                                   Foreground="#888888" 
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <Border x:Name="DropSecond"
+                        Height="100"
+                        Background="White"
+                        BorderBrush="#CCCCCC"
+                        BorderThickness="1.5"
+                        CornerRadius="8"
+                        AllowDrop="True" Cursor="Hand"
+                        Drop="DropSecondFile_Drop"
+                        DragOver="DropSecondFile_DragOver"
+                        DragLeave="DropSecondFile_DragLeave"
+                        MouseLeftButtonDown="DropSecondFile_Click"
+                        Margin="0,12,0,0"
+                        MouseEnter="DropSecondFile_MouseEnter"
+                        MouseLeave="DropSecondFile_MouseLeave">
+                    <StackPanel HorizontalAlignment="Center" 
+                                VerticalAlignment="Center" 
+                                IsHitTestVisible="False">
+                        <TextBlock Text="File 2 — drop here or click to browse"
+                                   FontSize="13" 
+                                   Foreground="#555555" 
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding SecondFile.FileName}"
+                                   FontSize="13" 
+                                   FontWeight="SemiBold" 
+                                   Foreground="Black"
+                                   HorizontalAlignment="Center" 
+                                   Margin="0,4,0,0"/>
+                        <TextBlock Text="{Binding SecondFile.FileSize}"
+                                   FontSize="11" 
+                                   Foreground="#888888" 
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <Grid Margin="0,14,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="130"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="8"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0"
+                               Text="Algorithm"
+                               FontSize="12" Foreground="#555555"
+                               VerticalAlignment="Center"
+                               Margin="0,0,10,0"/>
+
+                    <ComboBox Grid.Column="1"
+                              ItemsSource="{Binding AvailableAlgorithms}"
+                              SelectedItem="{Binding SelectedAlgorithm, Mode=TwoWay}"/>
+
+                    <Button Grid.Column="3"
+                            Content="Compare"
+                            Command="{Binding ComputeCommand}"
+                            MinWidth="90"/>
+
+                    <Button Grid.Column="5"
+                            Content="Cancel"
+                            Command="{Binding CancelCommand}"
+                            MinWidth="90"/>
+                </Grid>
+
+                <ProgressBar Margin="0,10,0,0"
+                             Value="{Binding Progress}"
+                             Visibility="{Binding IsComputing, Converter={StaticResource BoolToVisibility}}"/>
+
+                <StackPanel Margin="0,20,0,0"
+                            Visibility="{Binding HasResults, Converter={StaticResource BoolToVisibility}}">
+
+                    <Border x:Name="MatchBanner"
+                            CornerRadius="7"
+                            Padding="16,10"
+                            Margin="0,0,0,16">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsMatch}" Value="True">
+                                        <Setter Property="Background"      Value="{StaticResource MatchBrush}"/>
+                                        <Setter Property="BorderBrush"     Value="{StaticResource MatchBorder}"/>
+                                        <Setter Property="BorderThickness" Value="1"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsMatch}" Value="False">
+                                        <Setter Property="Background"      Value="{StaticResource MismatchBrush}"/>
+                                        <Setter Property="BorderBrush"     Value="{StaticResource MismatchBorder}"/>
+                                        <Setter Property="BorderThickness" Value="1"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock Text="{Binding MatchStatus}"
+                                   FontSize="14" FontWeight="SemiBold"
+                                   HorizontalAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsMatch}" Value="True">
+                                            <Setter Property="Foreground" Value="{StaticResource MatchText}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsMatch}" Value="False">
+                                            <Setter Property="Foreground" Value="{StaticResource MismatchText}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Border>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="12"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="{Binding SelectedAlgorithm}"
+                                           FontSize="11" 
+                                           FontWeight="SemiBold" 
+                                           Foreground="#5AADEE"/>
+                                <TextBlock Text=" · File 1" 
+                                           FontSize="11" 
+                                           Foreground="#888888"/>
+                            </StackPanel>
+                            <TextBox Text="{Binding FirstFile.Hash, Mode=OneWay}" IsReadOnly="True"/>
+                            <Button Content="Copy"
+                                    Command="{Binding FirstFile.CopyCommand}"
+                                    HorizontalAlignment="Left"
+                                    MinWidth="70" Margin="0,6,0,0"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="{Binding SelectedAlgorithm}"
+                                           FontSize="11" 
+                                           FontWeight="SemiBold" 
+                                           Foreground="#5AADEE"/>
+                                <TextBlock Text=" · File 2" 
+                                           FontSize="11" 
+                                           Foreground="#888888"/>
+                            </StackPanel>
+                            <TextBox Text="{Binding SecondFile.Hash, Mode=OneWay}" IsReadOnly="True"/>
+                            <Button Content="Copy"
+                                    Command="{Binding SecondFile.CopyCommand}"
+                                    HorizontalAlignment="Left"
+                                    MinWidth="70" Margin="0,6,0,0"/>
+                        </StackPanel>
+                    </Grid>
+
+                </StackPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid Background="#B8FFFFFF"
+              Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ProgressBar IsIndeterminate="True" Width="240" Height="4"/>
+                <TextBlock Text="{Binding LoadingMessage}"
+                           HorizontalAlignment="Center"
+                           Foreground="#333333" FontSize="13"
+                           Margin="0,12,0,0"/>
+            </StackPanel>
+        </Grid>
+
+    </Grid>
+</UserControl>

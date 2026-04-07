@@ -1,0 +1,125 @@
+﻿<UserControl x:Class="ChecksumCalculator.Views.SingleFileView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             Background="White">
+
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="30,24" MaxWidth="760">
+
+                <Border x:Name="DropFile"
+                        Height="110"
+                        Background="White"
+                        BorderBrush="#CCCCCC"
+                        BorderThickness="1.5"
+                        CornerRadius="8"
+                        AllowDrop="True"
+                        Cursor="Hand"
+                        Drop="DropFile_Drop"
+                        DragOver="DropFile_DragOver"
+                        DragLeave="DropFile_DragLeave"
+                        MouseLeftButtonDown="DropFile_Click"
+                        MouseEnter="DropFile_MouseEnter"
+                        MouseLeave="DropFile_MouseLeave">
+                    <StackPanel HorizontalAlignment="Center" 
+                                VerticalAlignment="Center" 
+                                IsHitTestVisible="False">
+                        <TextBlock Text="Drop file here or click to browse"
+                                   FontSize="14" 
+                                   Foreground="#555555" 
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding File.FileName}"
+                                   FontSize="13" 
+                                   FontWeight="SemiBold" 
+                                   Foreground="Black"
+                                   HorizontalAlignment="Center" 
+                                   Margin="0,4,0,0"/>
+                        <TextBlock Text="{Binding File.FileSize}"
+                                   FontSize="11" 
+                                   Foreground="#888888" 
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <Grid Margin="0,14,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="130"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="8"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0"
+                               Text="Algorithm"
+                               FontSize="12" Foreground="#555555"
+                               VerticalAlignment="Center"
+                               Margin="0,0,10,0"/>
+
+                    <ComboBox Grid.Column="1"
+                              ItemsSource="{Binding AvailableAlgorithms}"
+                              SelectedItem="{Binding SelectedAlgorithm, Mode=TwoWay}"/>
+
+                    <Button Grid.Column="3"
+                            Content="Compute"
+                            Command="{Binding ComputeCommand}"
+                            MinWidth="90"/>
+
+                    <Button Grid.Column="5"
+                            Content="Cancel"
+                            Command="{Binding CancelCommand}"
+                            MinWidth="90"/>
+                </Grid>
+
+                <ProgressBar Margin="0,10,0,0"
+                             Value="{Binding Progress}"
+                             Visibility="{Binding IsComputing, Converter={StaticResource BoolToVisibility}}"/>
+
+                <StackPanel Margin="0,20,0,0"
+                            Visibility="{Binding File.HasHash, Converter={StaticResource BoolToVisibility}}">
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                        <TextBlock Text="{Binding SelectedAlgorithm}"
+                                   FontSize="11" 
+                                   FontWeight="SemiBold" 
+                                   Foreground="#5AADEE"/>
+                        <TextBlock Text=" · " 
+                                   FontSize="11" 
+                                   Foreground="#AAAAAA"/>
+                        <TextBlock FontSize="11" Foreground="#AAAAAA">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0} chars">
+                                    <Binding Path="File.Hash.Length"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+
+                    <TextBox Text="{Binding File.Hash, Mode=OneWay}" IsReadOnly="True"/>
+
+                    <Button Content="Copy to clipboard"
+                            Command="{Binding File.CopyCommand}"
+                            HorizontalAlignment="Left"
+                            MinWidth="130"
+                            Margin="0,8,0,0"/>
+                </StackPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid Background="#B8FFFFFF"
+              Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ProgressBar IsIndeterminate="True" Width="240" Height="4"/>
+                <TextBlock Text="{Binding LoadingMessage}"
+                           HorizontalAlignment="Center"
+                           Foreground="#333333" FontSize="13"
+                           Margin="0,12,0,0"/>
+            </StackPanel>
+        </Grid>
+
+    </Grid>
+</UserControl>

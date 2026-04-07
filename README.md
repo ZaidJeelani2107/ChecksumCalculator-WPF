@@ -112,13 +112,13 @@ Contributions are welcome! Feel free to fork the repository and submit a pull re
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License.
 
 ---
 
-## 👨‍💻 Author
+## Author
 
 Mohammed Zaid Jeelani
 
@@ -126,5 +126,5 @@ Mohammed Zaid Jeelani
 
 ## Support
 
-If you found this project useful, consider giving it a star ⭐ on GitHub!
+If you found this project useful, consider giving it a star on GitHub!
 

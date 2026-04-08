@@ -50,7 +50,7 @@ A lightweight and user-friendly **WPF desktop application** for generating and c
 
 ---
 
-## 🔐 Supported Hash Algorithms
+## Supported Hash Algorithms
 
 * MD5
 * SHA-1
@@ -85,7 +85,8 @@ A lightweight and user-friendly **WPF desktop application** for generating and c
 
 * Calculate checksum
 
-<img width="1074" height="599" alt="image" src="https://github.com/user-attachments/assets/864fbba4-de70-4626-824d-db3a94ed17a1" />
+<img width="1071" height="759" alt="image" src="https://github.com/user-attachments/assets/d533d9c2-f08f-42cd-9290-1e9e5ff16d09" />
+
 
 ---
 

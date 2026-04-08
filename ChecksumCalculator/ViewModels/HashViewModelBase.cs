@@ -49,6 +49,13 @@ namespace ChecksumCalculator.ViewModels
             set => SetProperty(ref _loadingMessage, value);
         }
 
+        private HashAlgorithmType _computedAlgorithm = HashAlgorithmType.SHA256;
+        public HashAlgorithmType ComputedAlgorithm
+        {
+            get => _computedAlgorithm;
+            protected set => SetProperty(ref _computedAlgorithm, value);
+        }
+
         protected CancellationTokenSource? TokenSource { get; private set; }
         protected IHashService HashService { get; }
 

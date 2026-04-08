@@ -74,6 +74,7 @@ namespace ChecksumCalculator.ViewModels
                 FirstFile.Hash = firstHash;
                 SecondFile.Hash = secondHash;
                 EvaluateMatch();
+                ComputedAlgorithm = SelectedAlgorithm;
                 StatusText = "Done";
             }
             catch (OperationCanceledException)
